@@ -15,37 +15,37 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Vehicle {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long busId;
-	
-	private String busName;
-	
-	private String numberPlate;
-	
-	private String driverName;
-	
-	private Integer seatCount;
-	
-	private Integer availableSeatCount;
-	
-	private Long price;
 
-	public Vehicle() {
-		
-	}
-	
-	public Vehicle(Long busId, String busName, String numberPlate, String driverName, Integer seatCount, Integer availableSeatCount, Long price) {
-		super();
-		this.busId = busId;
-		this.busName = busName;
-		this.numberPlate = numberPlate;
-		this.driverName = driverName;
-		this.seatCount = seatCount;
-		this.availableSeatCount = availableSeatCount;
-		this.price = price;
-	}
+	private String busName;
+
+	private String numberPlate;
+
+	private String driverName;
+
+	private Integer seatCount;
+
+	private Integer availableSeatCount;
+
+	private Double price;
+
+//	public Vehicle() {
+//		
+//	}
+//	
+//	public Vehicle(Long busId, String busName, String numberPlate, String driverName, Integer seatCount, Integer availableSeatCount, Long price) {
+//		super();
+//		this.busId = busId;
+//		this.busName = busName;
+//		this.numberPlate = numberPlate;
+//		this.driverName = driverName;
+//		this.seatCount = seatCount;
+//		this.availableSeatCount = availableSeatCount;
+//		this.price = price;
+//	}
 
 	public Long getBusId() {
 		return busId;
@@ -86,7 +86,7 @@ public class Vehicle {
 	public void setAvailableSeatCount(Integer availableSeatCount) {
 		this.availableSeatCount = availableSeatCount;
 	}
-	
+
 	public Integer getSeatCount() {
 		return seatCount;
 	}
@@ -94,12 +94,12 @@ public class Vehicle {
 	public void setSeatCount(Integer seatCount) {
 		this.seatCount = seatCount;
 	}
-	
-	public Long getPrice() {
+
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(Long price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 
@@ -109,6 +109,5 @@ public class Vehicle {
 				+ driverName + ", seatCount=" + seatCount + ", availableSeatCount=" + availableSeatCount + ", price="
 				+ price + "]";
 	}
-	
-	
+
 }
