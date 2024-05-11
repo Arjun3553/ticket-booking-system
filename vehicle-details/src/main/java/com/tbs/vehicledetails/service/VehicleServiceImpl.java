@@ -16,11 +16,11 @@ import com.tbs.vehicledetails.repository.VehicleRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-public class VehicleServiceImpl implements VehicleService{
+public class VehicleServiceImpl implements VehicleService {
 
 	@Autowired
 	private VehicleRepository vehicleRepository;
-	
+
 	@Override
 	public List<Vehicle> findAllVehicles() {
 		return vehicleRepository.findAll();
@@ -33,7 +33,16 @@ public class VehicleServiceImpl implements VehicleService{
 
 	@Override
 	public Vehicle updateVehicle(Vehicle vehicle, Long id) {
-		return vehicleRepository.save(vehicle);
+
+		Vehicle $vehicle = vehicleRepository.findById(id).get();
+		$vehicle.setBusName(vehicle.getBusName());
+		$vehicle.setDriverName(vehicle.getDriverName());
+		$vehicle.setNumberPlate(vehicle.getNumberPlate());
+		$vehicle.setSeatCount(vehicle.getSeatCount());
+		$vehicle.setAvailableSeatCount(vehicle.getAvailableSeatCount());
+		$vehicle.setPrice(vehicle.getPrice());
+
+		return vehicleRepository.save($vehicle);
 	}
 
 	@Override
@@ -44,7 +53,7 @@ public class VehicleServiceImpl implements VehicleService{
 	@Override
 	public Vehicle getVehicleById(Long id) throws VehicleNotFoundException {
 		Optional<Vehicle> vehicle = vehicleRepository.findById(id);
-		if(!vehicle.isPresent()) {
+		if (!vehicle.isPresent()) {
 			System.out.println("I'm coming");
 			throw new VehicleNotFoundException("Vehicle Not Found");
 		}
@@ -52,9 +61,9 @@ public class VehicleServiceImpl implements VehicleService{
 	}
 
 	@Override
-	public List<Vehicle> getVehicleByName(String busName) throws VehicleNotFoundException{
+	public List<Vehicle> getVehicleByName(String busName) throws VehicleNotFoundException {
 		List<Vehicle> vehicle = vehicleRepository.findAllByBusName(busName);
-		if(vehicle.isEmpty()) {
+		if (vehicle.isEmpty()) {
 			throw new VehicleNotFoundException("Vehicle by that name not available");
 		}
 		return vehicle;
@@ -62,17 +71,17 @@ public class VehicleServiceImpl implements VehicleService{
 
 	@Override
 	public List<Vehicle> getVehicleByAvailabilty() throws VehicleNotFoundException {
-		
-		Sort sortBySeat = Sort.by(Sort.Direction.DESC,"availableSeatCount");
-		
+
+		Sort sortBySeat = Sort.by(Sort.Direction.DESC, "availableSeatCount");
+
 		List<Vehicle> vehicle = vehicleRepository.findAll(sortBySeat);
 		List<Vehicle> filtered = new ArrayList<Vehicle>();
-		
-		if(vehicle.isEmpty()) {
+
+		if (vehicle.isEmpty()) {
 			throw new VehicleNotFoundException("All Bus Full");
 		}
-		for(Vehicle v : vehicle) {
-			if(v.getAvailableSeatCount()>1) {
+		for (Vehicle v : vehicle) {
+			if (v.getAvailableSeatCount() > 1) {
 				filtered.add(v);
 			}
 		}
@@ -84,8 +93,5 @@ public class VehicleServiceImpl implements VehicleService{
 		Sort sortByPrice = Sort.by("price");
 		return vehicleRepository.findAll(sortByPrice);
 	}
-	
-	
-	
-	
+
 }

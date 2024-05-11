@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-profile
+          uri: lb://USER-PROFILE
+          predicates:
+            - Path=/user/**,/user/view/{userEmail}
+        - id: partner-profile
+          uri: lb://PARTNER-PROFILE
+          predicates:
+            - Path=/partner/**,/partner/delete/{email}
+        - id: vehicle-details
+          uri: lb://VEHICLE-DETAILS
+          predicates:
+            - Path=/vehicle/**,/vehicle/name/{vehicleName}
