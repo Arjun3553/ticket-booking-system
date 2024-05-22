@@ -4,13 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.userprofile.model.ErrorResponse;
+
 @RestControllerAdvice
-public class UserExceptions {
+public class HandleGlobalUserExceptions {
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -24,10 +27,12 @@ public class UserExceptions {
 		return errorMap;
 	}
 
-//	@ResponseStatus(HttpStatus.BAD_REQUEST)
-//	@ExceptionHandler(IllegalArgumentException.class)
-//	public String invalidMobileNumber(IllegalArgumentException ex) {
-//		return ex.getMessage();
-//	}
+	@ExceptionHandler(UserException.class)
+	public ResponseEntity<ErrorResponse> handleUserException(UserException ex) {
+		ErrorResponse errObj = ErrorResponse.builder().errorMessage(ex.getMessage()).errorCode(ex.getErrorCode())
+				.build();
+
+		return new ResponseEntity<>(errObj, errObj.getErrorCode());
+	}
 
 }

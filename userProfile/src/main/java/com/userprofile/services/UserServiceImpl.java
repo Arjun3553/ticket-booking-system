@@ -1,4 +1,4 @@
-package com.userprofile.services.implementations;
+package com.userprofile.services;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -12,10 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.userprofile.entity.UserProfileEntity;
+import com.userprofile.exceptions.UserException;
 import com.userprofile.model.UserRequest;
 import com.userprofile.model.UserResponse;
 import com.userprofile.repository.UserProfileRepository;
-import com.userprofile.services.interfaces.UserServiceInterface;
 
 import jakarta.transaction.Transactional;
 
@@ -30,10 +30,10 @@ public class UserServiceImpl implements UserServiceInterface {
 	private UserProfileRepository userProfileRepository;
 
 	@Override
-	public ResponseEntity<?> createUser(UserRequest userRequest) {
+	public ResponseEntity<?> createUser(UserRequest userRequest) throws UserException {
 
 		if (userProfileRepository.existsByUserEmail(userRequest.getUserEmail())) {
-			return new ResponseEntity<>("user already exists in database", HttpStatus.CONFLICT);
+			throw new UserException("record already exist in database", HttpStatus.CONFLICT);
 		}
 
 		else {
@@ -50,29 +50,33 @@ public class UserServiceImpl implements UserServiceInterface {
 	}
 
 	@Override
-	public ResponseEntity<?> readUser(String userEmail) {
+	public ResponseEntity<?> readUser(String userEmail) throws UserException {
 		if (userProfileRepository.existsByUserEmail(userEmail)) {
 			UserProfileEntity userProfileEntity = userProfileRepository.findByUserEmail(userEmail).get();
 			UserResponse userResponse = new UserResponse(userProfileEntity);
 
 			return new ResponseEntity<>(userResponse, HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>("no such user exists in database", HttpStatus.NOT_FOUND);
+			throw new UserException("no record exist in database", HttpStatus.NOT_FOUND);
 		}
 	}
 
 	@Override
-	public ResponseEntity<List<?>> readAllUsers() {
+	public ResponseEntity<List<?>> readAllUsers() throws UserException {
 
-		List<UserProfileEntity> userProfileEntities = userProfileRepository.findAll();
-		List<UserResponse> userList = userProfileEntities.stream().map(userProfileEntityToUserResponse)
-				.collect(Collectors.toList());
+		if (userProfileRepository.findAll().isEmpty()) {
+			throw new UserException("no record exist in database", HttpStatus.NOT_FOUND);
+		} else {
+			List<UserProfileEntity> userProfileEntities = userProfileRepository.findAll();
+			List<UserResponse> userList = userProfileEntities.stream().map(userProfileEntityToUserResponse)
+					.collect(Collectors.toList());
 
-		return new ResponseEntity<>(userList, HttpStatus.OK);
+			return new ResponseEntity<>(userList, HttpStatus.OK);
+		}
 	}
 
 	@Override
-	public ResponseEntity<?> updateUser(String userEmail, UserRequest userRequest) {
+	public ResponseEntity<?> updateUser(String userEmail, UserRequest userRequest) throws UserException {
 		if (userProfileRepository.existsByUserEmail(userEmail)) {
 			UserProfileEntity userProfileEntity = userProfileRepository.findByUserEmail(userEmail).get();
 			userProfileEntity.setUserDOB(userRequest.getUserDOB());
@@ -83,19 +87,19 @@ public class UserServiceImpl implements UserServiceInterface {
 			return new ResponseEntity<>("account details updated successfully", HttpStatus.ACCEPTED);
 
 		} else {
-			return new ResponseEntity<>("no such user exists in database", HttpStatus.NOT_FOUND);
+			throw new UserException("no record exist in database", HttpStatus.NOT_FOUND);
 		}
 	}
 
 	@Override
-	public ResponseEntity<?> deleteUser(String userEmail) {
+	public ResponseEntity<?> deleteUser(String userEmail) throws UserException {
 		if (userProfileRepository.existsByUserEmail(userEmail)) {
 
 			userProfileRepository.deleteByUserEmail(userEmail);
 
 			return new ResponseEntity<>("account deleted successfully", HttpStatus.ACCEPTED);
 		} else {
-			return new ResponseEntity<>("no such user exists in database", HttpStatus.NOT_FOUND);
+			throw new UserException("no record exist in database", HttpStatus.NOT_FOUND);
 		}
 	}
 
