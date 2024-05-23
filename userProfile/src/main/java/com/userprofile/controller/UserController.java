@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.userprofile.model.UserRequest;
-import com.userprofile.services.UserServiceInterface;
+import com.userprofile.services.interfaces.UserServiceInterface;
 
 import jakarta.validation.Valid;
 
